@@ -27,17 +27,20 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: ''
 
       - name: Install Android Build Tools
         run: |
-          sdkmanager "build-tools;35.0.0"
+          sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          yes | sdkmanager --licenses || true
           echo "$ANDROID_HOME/build-tools/35.0.0" >> "$GITHUB_PATH"
 
       - name: Install Python and apktool
         run: |
           sudo apt-get update
           sudo apt-get install -y python3
-          curl -L -o apktool.jar \
+          curl -fL -o apktool.jar \
             https://github.com/iBotPeaches/Apktool/releases/download/v2.11.1/apktool_2.11.1.jar
           echo '#!/bin/sh' > apktool
           echo 'exec java -jar "$GITHUB_WORKSPACE/apktool.jar" "$@"' >> apktool
@@ -63,4 +66,3 @@ jobs:
           path: output/LVNG-X.apk
           if-no-files-found: error
           retention-days: 30
-          
